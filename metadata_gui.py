@@ -3,9 +3,6 @@ import threading
 import tkinter as tk
 from tkinter import scrolledtext
 from tkinter import ttk
-import os
-import glob
-import subprocess
 
 class ServerApp:
     def __init__(self, master):
@@ -15,6 +12,7 @@ class ServerApp:
         self.clients = []  # 연결된 클라이언트 목록
         self.combobox_value = {}
         self.checkbox_value = {}
+        self.textbox_value = {}
 
         # meta.json
         metajson = tk.LabelFrame(master, text="meta")
@@ -50,7 +48,7 @@ class ServerApp:
 
         self.combobox_create(self.scenario_id, scenario_frame, "scenario id", 10)
         self.combobox_create(self.test, scenario_frame, "causative object", 10)
-        self.combobox_create(self.test, scenario_frame, "description", 10)
+        self.textbox_create(scenario_frame, "description", 35)
         self.combobox_create(self.abnormal_cause, abnormal_frame, "abnormal cause", 10)
         self.combobox_create(self.test, abnormal_frame, "discerned timestamp", 10)
 
@@ -139,7 +137,7 @@ class ServerApp:
         abnormal_cause_send = self.setup_message(self.abnormal_cause, "abnormal cause")
         discerned_timestamp_send = self.setup_message(self.test, "discerned timestamp")
         causative_object_send = self.setup_message(self.test, "causative object")
-        description_send = self.setup_message(self.test, "description")
+        description_send = self.textbox_value["description"].get()
         scenario_id_send = self.setup_message(self.scenario_id, "scenario id")
         datetime_send = self.setup_message(self.datetime, "datetime")
         driving_mode_send = self.setup_message(self.driving_mode, "driving mode")
@@ -193,6 +191,14 @@ class ServerApp:
             checkbox = tk.Checkbutton(frame, text=item, variable=var, onvalue=str(idx), offvalue="")
             checkbox.pack(anchor="w")
             self.checkbox_value[title][item] = var
+
+    def textbox_create(self, master_frame, title, w):
+        frame = tk.Frame(master_frame)
+        frame.pack(side=tk.LEFT, padx=10)
+        label = tk.Label(frame, text=title).pack()
+        textbox = tk.Entry(frame, width=w)
+        textbox.pack(pady=5)
+        self.textbox_value[title] = textbox
 
 if __name__ == "__main__":
     root = tk.Tk()
